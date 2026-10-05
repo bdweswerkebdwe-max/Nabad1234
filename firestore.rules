@@ -1,0 +1,50 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // API Keys Collection
+    match /api_keys/{keyId} {
+      allow read: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid);
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid
+                    && request.resource.data.key is string
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() <= 100;
+      allow update: if isSignedIn() && resource.data.userId == request.auth.uid
+                    && request.resource.data.userId == resource.data.userId
+                    && request.resource.data.key == resource.data.key
+                    && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if isSignedIn() && resource.data.userId == request.auth.uid;
+    }
+
+    // Wallets Collection
+    match /wallets/{walletId} {
+      allow read: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid);
+      allow write: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+    }
+
+    // Usage Logs Collection
+    match /usage_logs/{logId} {
+      allow read: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid);
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+      allow update, delete: if false; // Logs are immutable once created
+    }
+  }
+}

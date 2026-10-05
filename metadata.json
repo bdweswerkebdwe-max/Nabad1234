@@ -1,0 +1,6 @@
+{
+  "name": "Nabad AI Platform",
+  "description": "منصة SaaS متكاملة لنماذج الذكاء الاصطناعي مفتوحة المصدر وتكامل الـ API مع نظام بوابة المطورين ومفاتيح sk-nabad.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

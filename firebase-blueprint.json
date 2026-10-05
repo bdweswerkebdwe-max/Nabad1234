@@ -1,0 +1,65 @@
+{
+  "entities": {
+    "ApiKey": {
+      "title": "API Key Definition",
+      "description": "Store issued API Keys with metrics, names, limits and status.",
+      "type": "object",
+      "properties": {
+        "key": { "type": "string" },
+        "name": { "type": "string" },
+        "userId": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "status": { "type": "string" },
+        "requestsCount": { "type": "number" },
+        "tokensCount": { "type": "number" },
+        "limit": { "type": "number" },
+        "cost": { "type": "number" }
+      },
+      "required": ["key", "name", "userId", "createdAt", "status"]
+    },
+    "Wallet": {
+      "title": "User Token Wallet",
+      "description": "Tracks available and consumed tokens for users and keys.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "balanceTokens": { "type": "number" },
+        "tokensConsumed": { "type": "number" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["userId", "balanceTokens", "tokensConsumed"]
+    },
+    "UsageLog": {
+      "title": "Usage Log Entry",
+      "description": "Logs detailed completions and tokens used per call.",
+      "type": "object",
+      "properties": {
+        "keyId": { "type": "string" },
+        "keyName": { "type": "string" },
+        "userId": { "type": "string" },
+        "model": { "type": "string" },
+        "promptTokens": { "type": "number" },
+        "completionTokens": { "type": "number" },
+        "totalTokens": { "type": "number" },
+        "cost": { "type": "number" },
+        "latencyMs": { "type": "number" },
+        "routeType": { "type": "string" }
+      },
+      "required": ["keyId", "userId", "model", "totalTokens"]
+    }
+  },
+  "firestore": {
+    "/api_keys/{keyId}": {
+      "schema": "ApiKey",
+      "description": "Collection of sk-nabad API keys."
+    },
+    "/wallets/{walletId}": {
+      "schema": "Wallet",
+      "description": "User wallets for token balancing."
+    },
+    "/usage_logs/{logId}": {
+      "schema": "UsageLog",
+      "description": "Detailed requests logging."
+    }
+  }
+}
